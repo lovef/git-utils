@@ -9,9 +9,10 @@ while getopts ":hs" flag; do
 case "$flag" in
     h) help=true;;
     s) sync=true;;
-    :) printf "missing argument for -%s\n\n" "$OPTARG" >&2
-       ;;
-    \?) printf "illegal option: -%s\n\n" "$OPTARG" >&2
+    :)  printf "\nmissing argument for -%s\n" "$OPTARG" >&2
+        help=true
+        ;;
+    \?) printf "\nillegal option: -%s\n" "$OPTARG" >&2
         help=true
         ;;
 esac
@@ -21,7 +22,8 @@ remote="origin"
 branch="master"
 remoteBranch="$remote/$branch"
 
-usage="$(basename "$0") [options]
+usage="
+usage: $(basename "$0") [options]
 
     check out $remoteBranch, delete all merged branches and
     prunes origin

@@ -10,9 +10,10 @@ case "$flag" in
     h) help=true;;
     n) new=true;;
     f) force=true;;
-    :) printf "missing argument for -%s\n\n" "$OPTARG" >&2
-       ;;
-    \?) printf "illegal option: -%s\n\n" "$OPTARG" >&2
+    :)  printf "\nmissing argument for -%s\n" "$OPTARG" >&2
+        help=true
+        ;;
+    \?) printf "\nillegal option: -%s\n" "$OPTARG" >&2
         help=true
         ;;
 esac
@@ -22,7 +23,8 @@ remote="origin"
 branch="master"
 remoteBranch="$remote/$branch"
 
-usage="$(basename "$0") [options]
+usage="
+usage: $(basename "$0") [options]
 
     Uploads current branch to an existing remote tracking branch. If no remote
     branch exist then a new branch is created.

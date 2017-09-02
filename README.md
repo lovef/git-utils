@@ -3,20 +3,39 @@
 My utilities for git
 
 ```
-$ git prune-merged -h
-git-prune-merged [options]
+$ git start -h
 
-    check out origin/master, delete all merged branches and
-    prunes origin
+usage: git-start [options] newBranch
+
+    Starts a new branch from the base branch.
+
+    Base branch is
+        origin master if it exists, else
+        master
 
 where:
     -h  show this help text
-    -s  sync origin/master
+    -s  sync default branch
+```
+
+```
+$ git upload -h
+
+usage: git-upload [options]
+
+    Uploads current branch to an existing remote tracking branch. If no remote
+    branch exist then a new branch is created.
+
+where:
+    -h  show this help text
+    -n  try to push to new branch
+    -f  force push
 ```
 
 ```
 $ git sync -h
-git-sync [options]
+
+usage: git-sync [options]
 
     rebases current branch against origin/master
 
@@ -26,16 +45,16 @@ where:
 ```
 
 ```
-$ git upload -h
-git-upload [options]
+$ git prune-merged -h
 
-    Uploads current branch to an existing remote tracking branch. If no remote
-    branch exist then a new branch is created.
+usage: git-prune-merged [options]
+
+    check out origin/master, delete all merged branches and
+    prunes origin
 
 where:
     -h  show this help text
-    -n  try to push to new branch
-    -f  force push
+    -s  sync origin/master
 ```
 
 ## Setup

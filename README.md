@@ -7,15 +7,12 @@ $ git start -h
 
 usage: git-start [options] newBranch
 
-    Starts a new branch from the base branch.
-
-    Base branch is
-        origin master if it exists, else
-        master
+    Starts a new branch.
 
 where:
     -h  show this help text
-    -s  sync default branch
+    -d  use default branch (origin master or master)
+    -s  sync default branch (if using default branch)
 ```
 
 ```

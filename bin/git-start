@@ -5,10 +5,11 @@
 
 # https://stackoverflow.com/a/13400237/1020871
 # https://stackoverflow.com/a/5476278/1020871
-while getopts ":hs" flag; do
+while getopts ":hsd" flag; do
 case "$flag" in
     h) help=true;;
     s) sync=true;;
+    d) useDefault=true;;
     :)  printf "\nmissing argument for -%s\n" "$OPTARG" >&2
         help=true
         ;;
@@ -21,25 +22,30 @@ done
 newBranch=${@:$OPTIND:1}
 
 remote="origin"
-baseBranch="master"
-remoteBranch="$remote/$baseBranch"
+defaultBranch="master"
 
 usage="
 usage: $(basename "$0") [options] newBranch
 
-    Starts a new branch from the base branch.
-
-    Base branch is
-        $remote $baseBranch if it exists, else
-        $baseBranch
+    Starts a new branch.
 
 where:
     -h  show this help text
-    -s  sync default branch"
+    -d  use default branch ($remote $defaultBranch or $defaultBranch)
+    -s  sync default branch (if using default branch)"
 
 if [ "$help" = true ] ; then
     echo "$usage" >&2
     exit 1
+fi
+
+ref=HEAD
+
+if [ "$useDefault" = true ] ; then
+    ref=$defaultBranch
+    if [ -n "$remote" ]; then
+        ref=$remote/$ref
+    fi
 fi
 
 if [ -z "$newBranch" ]; then
@@ -50,15 +56,11 @@ if [ -z "$newBranch" ]; then
 fi
 
 if !(git remote | grep $remote > /dev/null); then
-  unset remote
+    unset remote
 fi
 
-if [ "$sync" = true ] && [ -n "$remote" ] ; then
-    git fetch $remote $baseBranch
+if [ "$sync" = true ] && [ "$useDefault" = true ] && [ -n "$remote" ] ; then
+    git fetch $remote $defaultBranch
 fi
 
-if [ -n "$remote" ]; then
-    baseBranch=$remote/$baseBranch
-fi
-
-git checkout -b $newBranch $baseBranch
+git checkout --no-track -b $newBranch $ref

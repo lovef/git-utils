@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+
+# TODO: evaluate source "$(git --exec-path)/git-sh-setup"
+
+
+# https://stackoverflow.com/a/13400237/1020871
+# https://stackoverflow.com/a/5476278/1020871
+while getopts ":hnf" flag; do
+case "$flag" in
+    h) help=true;;
+    n) new=true;;
+    f) force=true;;
+    :) printf "missing argument for -%s\n\n" "$OPTARG" >&2
+       ;;
+    \?) printf "illegal option: -%s\n\n" "$OPTARG" >&2
+        help=true
+        ;;
+esac
+done
+
+remote="origin"
+branch="master"
+remoteBranch="$remote/$branch"
+
+usage="$(basename "$0") [options]
+
+    Uploads current branch to an existing remote tracking branch. If no remote
+    branch exist then a new branch is created.
+
+where:
+    -h  show this help text
+    -n  try to push to new branch
+    -f  force push"
+
+if [ "$help" = true ] ; then
+    echo "$usage" >&2
+    exit 1
+fi
+
+# Exit on error
+set -e
+
+remote=origin
+master="origin/master"
+localBranch=`git rev-parse --abbrev-ref HEAD`
+if [ "$localBranch" == HEAD ]; then
+  echo "push from 'detached HEAD' state is not allowed"
+  exit 1
+fi
+trackingBranch=`git rev-parse --abbrev-ref --symbolic-full-name @{upstream} 2> /dev/null | sed "s/$remote\///"`
+echo Result 2: $trackingBranch
+if [ "$trackingBranch" == "$master" ]; then
+  echo "push to $trackingBranch is not allowed"
+  exit 1
+elif [ -z "$trackingBranch" ] || [ "$new" ]; then
+    user=`git config user.email | sed 's/@.*//'`
+    remoteBranch=$user/$localBranch
+    echo "push to $remote $remoteBranch"
+    git push --set-upstream $remote $localBranch:$remoteBranch
+else
+    echo "Push to existing branch $trackingBranch"
+    options=""
+    if [ "$force" = true ] ; then
+        options=--force
+    fi
+    git push $remote $localBranch:$trackingBranch $options
+fi

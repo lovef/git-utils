@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+
+# TODO: evaluate source "$(git --exec-path)/git-sh-setup"
+
+
+# https://stackoverflow.com/a/13400237/1020871
+# https://stackoverflow.com/a/5476278/1020871
+while getopts ":hf" flag; do
+case "$flag" in
+    h) help=true;;
+    f) force=true;;
+    :) printf "missing argument for -%s\n\n" "$OPTARG" >&2
+       ;;
+    \?) printf "illegal option: -%s\n\n" "$OPTARG" >&2
+        help=true
+        ;;
+esac
+done
+
+remote="origin"
+branch="master"
+remoteBranch="$remote/$branch"
+
+usage="$(basename "$0") [options]
+
+    Uploads current branch to an existing remote tracking branch. If no remote
+    branch exist then a new branch is created.
+
+where:
+    -h  show this help text
+    -f  force push"
+
+if [ "$help" = true ] ; then
+    echo "$usage" >&2
+    exit 1
+fi
+
+# Exit on error
+set -e
+
+#
+
+trackingBranch=`git for-each-ref --format='%(upstream:short)' $(git symbolic-ref -q HEAD)`
+if [ -z "$trackingBranch" ]; then
+    user=`git config user.email | sed 's/@.*//'`
+    echo `git config user.email | sed 's/@.*//'`
+else
+    options=""
+    if [ "$force" = true ] ; then
+        options=--force
+    fi
+    git push origin HEAD $trackingBranch $options
+fi
+echo Result: $trackingBranch

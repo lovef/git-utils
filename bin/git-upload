@@ -48,7 +48,6 @@ if [ "$localBranch" == HEAD ]; then
   exit 1
 fi
 trackingBranch=`git rev-parse --abbrev-ref --symbolic-full-name @{upstream} 2> /dev/null | sed "s/$remote\///"`
-echo Result 2: $trackingBranch
 if [ "$trackingBranch" == "$master" ]; then
   echo "push to $trackingBranch is not allowed"
   exit 1

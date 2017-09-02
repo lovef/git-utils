@@ -14,8 +14,18 @@ where:
     -s  sync origin/master
 ```
 
+```
+git-sync [options]
+
+    rebases current branch against origin/master
+
+where:
+    -h  show this help text
+    -s  fetch origin/master before rebase
+```
+
 ## Setup
 
 ```
-$ cp bin/git-prune-merged ~/bin
+$ cp bin/git-* ~/bin
 ```

@@ -1,48 +1,44 @@
 #!/usr/bin/env bash
 
-# TODO: evaluate source "$(git --exec-path)/git-sh-setup"
-
-
-# https://stackoverflow.com/a/13400237/1020871
-# https://stackoverflow.com/a/5476278/1020871
-while getopts ":hs" flag; do
-case "$flag" in
-    h) help=true;;
-    s) sync=true;;
-    :)  printf "\nmissing argument for -%s\n" "$OPTARG" >&2
-        help=true
-        ;;
-    \?) printf "\nillegal option: -%s\n" "$OPTARG" >&2
-        help=true
-        ;;
-esac
-done
-
+# https://github.com/git/git/blob/master/git-rebase.sh
 remote="origin"
 branch="master"
 remoteBranch="$remote/$branch"
+OPTIONS_STUCKLONG=t
+OPTIONS_KEEPDASHDASH=
+OPTIONS_SPEC="\
+git prune-merged [options]
+--
+  check out $remoteBranch, delete all merged branches and prunes origin.
 
-usage="
-usage: $(basename "$0") [options]
+ Available options are
+s,sync!  fetch $remoteBranch from $remote before checkout
+"
 
-    check out $remoteBranch, delete all merged branches and
-    prunes origin
+# https://www.kernel.org/pub/software/scm/git/docs/git-sh-setup.html
+. "$(git --exec-path)/git-sh-setup"
 
-where:
-    -h  show this help text
-    -s  sync $remoteBranch"
+total_argc=$#
+while test $# != 0
+do
+	case "$1" in
+	--sync)  sync=true;;
+	--)
+		shift
+		break
+		;;
+	esac
+	shift
+done
+# No positional arguments
+test $# -ne 0 && usage
 
-if [ "$help" = true ] ; then
-    echo "$usage" >&2
-    exit 1
-fi
+# Exit on error
+set -e
 
 if [ "$sync" = true ] ; then
     git fetch $remote $branch
 fi
-
-# Exit on error
-set -e
 
 # Prune
 # https://stackoverflow.com/a/6127884/1020871

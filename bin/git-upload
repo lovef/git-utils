@@ -1,43 +1,41 @@
 #!/usr/bin/env bash
 
-# TODO: evaluate source "$(git --exec-path)/git-sh-setup"
+# https://github.com/git/git/blob/master/git-rebase.sh
+OPTIONS_STUCKLONG=t
+OPTIONS_KEEPDASHDASH=
+OPTIONS_SPEC="\
+git upload [options]
+--
+ Uploads current branch to an existing remote tracking branch.
+ If no remote branch exist then a new branch is created.
 
+ Available options are
+n,new-branch!  push to new branch even if tracking branch already exists
+f,force!       force push
+"
 
-# https://stackoverflow.com/a/13400237/1020871
-# https://stackoverflow.com/a/5476278/1020871
-while getopts ":hnf" flag; do
-case "$flag" in
-    h) help=true;;
-    n) new=true;;
-    f) force=true;;
-    :)  printf "\nmissing argument for -%s\n" "$OPTARG" >&2
-        help=true
-        ;;
-    \?) printf "\nillegal option: -%s\n" "$OPTARG" >&2
-        help=true
-        ;;
-esac
+# https://www.kernel.org/pub/software/scm/git/docs/git-sh-setup.html
+. "$(git --exec-path)/git-sh-setup"
+
+total_argc=$#
+while test $# != 0
+do
+	case "$1" in
+	--new-branch)  new=true;;
+	--force)       force=true;;
+	--)
+		shift
+		break
+		;;
+	esac
+	shift
 done
+# No positional arguments
+test $# -ne 0 && usage
 
 remote="origin"
 branch="master"
 remoteBranch="$remote/$branch"
-
-usage="
-usage: $(basename "$0") [options]
-
-    Uploads current branch to an existing remote tracking branch. If no remote
-    branch exist then a new branch is created.
-
-where:
-    -h  show this help text
-    -n  try to push to new branch
-    -f  force push"
-
-if [ "$help" = true ] ; then
-    echo "$usage" >&2
-    exit 1
-fi
 
 # Exit on error
 set -e

@@ -1,62 +1,51 @@
 #!/usr/bin/env bash
 
-# TODO: evaluate source "$(git --exec-path)/git-sh-setup"
-
-
-# https://stackoverflow.com/a/13400237/1020871
-# https://stackoverflow.com/a/5476278/1020871
-while getopts ":hsd" flag; do
-case "$flag" in
-    h) help=true;;
-    s) sync=true;;
-    d) useDefault=true;;
-    :)  printf "\nmissing argument for -%s\n" "$OPTARG" >&2
-        help=true
-        ;;
-    \?) printf "\nillegal option: -%s\n" "$OPTARG" >&2
-        help=true
-        ;;
-esac
-done
-
-newBranch=${@:$OPTIND:1}
-
+# https://github.com/git/git/blob/master/git-rebase.sh
 remote="origin"
 defaultBranch="master"
+OPTIONS_STUCKLONG=t
+OPTIONS_KEEPDASHDASH=
+OPTIONS_SPEC="\
+git start [options] <branch>
+--
+ Starts a new branch.
 
-usage="
-usage: $(basename "$0") [options] newBranch
+ Available options are
+d,default-branch!  start from default branch ($remote $defaultBranch or $defaultBranch)
+s,sync!            sync default branch (if using default branch) before start
+"
 
-    Starts a new branch.
+# https://www.kernel.org/pub/software/scm/git/docs/git-sh-setup.html
+. "$(git --exec-path)/git-sh-setup"
 
-where:
-    -h  show this help text
-    -d  use default branch ($remote $defaultBranch or $defaultBranch)
-    -s  sync default branch (if using default branch)"
+total_argc=$#
+while test $# != 0
+do
+	case "$1" in
+	--default-branch)  useDefault=true;;
+	--sync)            sync=true;;
+	--)
+		shift
+		break
+		;;
+	esac
+	shift
+done
+# Exaclty one positional argument
+test $# -ne 1 && usage
 
-if [ "$help" = true ] ; then
-    echo "$usage" >&2
-    exit 1
-fi
-
+newBranch=$1
 ref=HEAD
+
+if !(git remote | grep $remote > /dev/null); then
+    unset remote
+fi
 
 if [ "$useDefault" = true ] ; then
     ref=$defaultBranch
     if [ -n "$remote" ]; then
         ref=$remote/$ref
     fi
-fi
-
-if [ -z "$newBranch" ]; then
-    echo
-    echo "no branch name provided"
-    echo "$usage" >&2
-    exit 1
-fi
-
-if !(git remote | grep $remote > /dev/null); then
-    unset remote
 fi
 
 if [ "$sync" = true ] && [ "$useDefault" = true ] && [ -n "$remote" ] ; then

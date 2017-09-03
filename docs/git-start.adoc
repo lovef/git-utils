@@ -1,0 +1,32 @@
+git-start(1)
+============
+
+NAME
+----
+git-start - Starts a new branch
+
+
+SYNOPSIS
+--------
+[verse]
+'git start' [options] <branch>
+
+
+DESCRIPTION
+-----------
+Starts a new branch from the current `HEAD`. Use `--default-branch` to start from the default branch
+(origin master if it exists, otherwise local master).
+
+If starting from a remote branch with `--default-branch` option then `--sync` will fetch it first.
+
+
+OPTIONS
+-------
+
+-d::
+--default-branch::
+	Start from default branch (origin master if it exists, otherwise local master).
+
+-s::
+--sync::
+	If starting from a remote branch with `-d` option then `--sync` will fetch it first.

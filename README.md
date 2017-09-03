@@ -62,7 +62,7 @@ and copying the scripts to it
 cp bin/git-* ~/bin
 ```
 
-# git help
+### git help
 
 To use `git help` you need to compile the docs with `./gradlew asciidoctor` and copy them from
 `build/docs/html5/` to the appropriate folder. On Git for Windows it is in

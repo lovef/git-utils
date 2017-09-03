@@ -28,14 +28,12 @@ Available options are
 
 ```
 $ git sync -h
+usage: git sync [options]
 
-usage: git-sync [options]
+rebases current branch against origin/master
 
-    rebases current branch against origin/master
-
-where:
-    -h  show this help text
-    -s  fetch origin/master before rebase
+Available options are
+    -s, --sync            fetch origin/master from origin before rebase
 ```
 
 ```

@@ -48,6 +48,16 @@ Available options are
 
 ## Setup
 
+Place the git scripts from `bin` in your `PATH`, eg by creating a `bin` catalog in your home directory:
+
+```bash
+mkdir ~/bin
 ```
-$ cp bin/git-* ~/bin
+adding it to `PATH`
+```bash
+export PATH=~/bin:$PATH
+```
+and copying the scripts to it
+```bash
+cp bin/git-* ~/bin
 ```

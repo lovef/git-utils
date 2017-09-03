@@ -1,0 +1,32 @@
+git-sync(1)
+===========
+
+NAME
+----
+git-sync - Rebases current branch against `origin/master`
+
+
+SYNOPSIS
+--------
+[verse]
+'git sync' [options]
+
+
+DESCRIPTION
+-----------
+Rebases current branch against `origin/master`. Handy when preparing a branch for a pull request.
+
+
+OPTIONS
+-------
+
+-s::
+--sync::
+	Fetch `origin/master` first.
+
+
+NOTES
+-----
+
+Once succesfully initiated, `git sync` will start a rebase and you might need to handle
+conflicts etc.

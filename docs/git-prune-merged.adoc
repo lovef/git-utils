@@ -1,0 +1,35 @@
+git-prune-merged(1)
+===================
+
+NAME
+----
+git-prune-merged - Checkout origin/master, delete all merged branches and prunes origin.
+
+
+SYNOPSIS
+--------
+[verse]
+'git prune-merged' [options]
+
+
+DESCRIPTION
+-----------
+Checkout `origin/master`, delete all merged branches and prunes `origin`. Handy once a pull request
+is merged.
+
+Use `--sync` to fetch `origin/master` before pruning.
+
+
+OPTIONS
+-------
+
+-s::
+--sync::
+	Fetch `origin/master` from origin before checkout
+
+
+NOTES
+-----
+
+Currently avoids deleting local `master` even if it is merged to `origin/master`, this might
+change in the future.

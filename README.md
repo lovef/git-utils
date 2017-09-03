@@ -4,15 +4,13 @@ My utilities for git
 
 ```
 $ git start -h
+usage: git start [options] <branch>
 
-usage: git-start [options] newBranch
+Starts a new branch.
 
-    Starts a new branch.
-
-where:
-    -h  show this help text
-    -d  use default branch (origin master or master)
-    -s  sync default branch (if using default branch)
+Available options are
+    -d, --default-branch  start from default branch (origin master or master)
+    -s, --sync            sync default branch (if using default branch) before start
 ```
 
 ```

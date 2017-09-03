@@ -38,15 +38,12 @@ Available options are
 
 ```
 $ git prune-merged -h
+usage: git prune-merged [options]
 
-usage: git-prune-merged [options]
+check out origin/master, delete all merged branches and prunes origin.
 
-    check out origin/master, delete all merged branches and
-    prunes origin
-
-where:
-    -h  show this help text
-    -s  sync origin/master
+Available options are
+    -s, --sync            fetch origin/master from origin before checkout
 ```
 
 ## Setup

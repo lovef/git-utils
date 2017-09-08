@@ -50,15 +50,15 @@ Available options are
 
 Place the git scripts from `bin` in your `PATH`, eg by creating a `bin` catalog in your home directory:
 
-```bash
+```sh
 mkdir ~/bin
 ```
 adding it to `PATH`
-```bash
+```sh
 export PATH=~/bin:$PATH
 ```
 and copying the scripts to it
-```bash
+```sh
 cp bin/git-* ~/bin
 ```
 
@@ -67,3 +67,13 @@ cp bin/git-* ~/bin
 To use `git help` you need to compile the docs with `./gradlew asciidoctor` and copy them from
 `build/docs/html5/` to the appropriate folder. On Git for Windows it is in
 `/mingw64/share/doc/git-doc/`.
+
+## Test
+
+You'll need to install [bats](https://github.com/sstephenson/bats#installing-bats-from-source), the Bash automated testing system. It's also available as `brew install bats`
+
+```sh
+git submodule update --init
+
+bats test
+```

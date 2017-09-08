@@ -51,6 +51,7 @@ setup() {
   git-start --default-branch b
   assert_equal `git rev-parse b` `git rev-parse origin/master`
   assert_not_equal `git rev-parse b` `git rev-parse master`
+  assert [ -z `git config branch.b.merge` ]
 }
 
 teardown() {

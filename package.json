@@ -1,0 +1,40 @@
+{
+  "name": "lovef-git-utils",
+  "version": "0.0.0",
+  "description": "A set of git utils",
+  "author": "Love F",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/lovef/git-utils",
+  "bugs": {
+    "url": "https://github.com/lovef/git-utils/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lovef/git-utils.git"
+  },
+  "contributors": [
+    "Love F <lovef.code@gmail.com>"
+  ],
+  "keywords": [
+    "git",
+    "cli"
+  ],
+  "engines": {
+    "node": ">=0.10.3",
+    "npm": ">=2.0.0"
+  },
+  "preferGlobal": true,
+  "scripts": {
+    "test": "npm run unit && npm run lint:package && npm run lint:readme && npm run lint:editorconfig",
+    "lint:editorconfig": "eclint check bin/git-* readme* .travis.yml",
+    "lint:package": "pjv --recommendations --warnings",
+    "lint:readme": "node ./node_modules/markdownlint/lib/markdownlint.js --config markdownlint.json README.md",
+    "unit": "bats test/"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "eclint": "^2.1.0",
+    "markdownlint": "^0.2.0",
+    "package-json-validator": "^0.6.1"
+  }
+}

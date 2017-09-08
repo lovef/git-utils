@@ -1,7 +1,9 @@
 #!/usr/bin/env bats
 
 project=`pwd`
-alias git-start="$project/bin/git-start"
+function git-start() {
+   "$project/bin/git-start" $@
+}
 
 load "test_helper/bats-support/load"
 load "test_helper/bats-assert/load"

@@ -1,11 +1,5 @@
 language: node_js
 node_js: "node"
-addons:
-  apt:
-    sources:
-    - debian-sid    # Grab ShellCheck from the Debian repo
-    packages:
-    - shellcheck
 cache:
   directories:
     - node_modules
@@ -14,8 +8,4 @@ before_install:
 install:
   - npm install
 script:
-  - npm run lint:package
-  - npm run lint:readme
-  - npm run lint:editorconfig
-  - shellcheck git-open
-  - ./bats/bin/bats test/*.bats
+  - npm run test

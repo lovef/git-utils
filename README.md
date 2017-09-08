@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/lovef/git-utils.svg?branch=master)](https://travis-ci.org/lovef/git-utils)
+
 # git utils
 
 My utilities for git
@@ -77,3 +79,11 @@ git submodule update --init
 
 bats test
 ```
+
+Or with npm
+
+```sh
+npm test
+```
+
+Test, travis and npm setup is heavily inspired by [git-open](https://github.com/paulirish/git-open).

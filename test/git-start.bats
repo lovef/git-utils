@@ -14,7 +14,7 @@ setup() {
   assert_equal `pwd` "$project/$sandboxGit"
 }
 
-@test "help text" {
+@test "start help text" {
   run git-start -h
   assert_output --partial "usage: git start"
 }

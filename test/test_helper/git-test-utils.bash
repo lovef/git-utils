@@ -32,6 +32,13 @@ function create_remote_sandbox() {
   assert_equal `git config --get remote.$1.url` $sandboxRemote
 }
 
+function commit_file() {
+    assert [ ! -z "$1" ]
+    touch "$1"
+    git add "$1"
+    git commit -m"$1"
+}
+
 function start_path_with() {
     if [[ ! "$1" == z* ]]; then
         export PATH="$1:$PATH"

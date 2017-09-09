@@ -42,6 +42,10 @@ fi
 
 # Prune
 # https://stackoverflow.com/a/6127884/1020871
-git co $remoteBranch
-git branch --merged | egrep -v "(^\*|^\s+master$)" | xargs -r git branch -d
+git checkout $remoteBranch
+say
+say about to prune merged branches
+git branch --merged | egrep -v "(^\*|^\s+master$)" | xargs -I {} bash -c 'if [[ -n "{}" ]]; then git branch -d "{}"; fi'
+say
+say about to prune origin
 git remote prune origin

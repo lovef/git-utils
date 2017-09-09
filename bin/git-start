@@ -3,14 +3,13 @@
 # https://github.com/git/git/blob/master/git-rebase.sh
 remote="origin"
 defaultBranch="master"
-OPTIONS_STUCKLONG=t
 OPTIONS_KEEPDASHDASH=
 OPTIONS_SPEC="\
 git start [options] <branch>
 --
- Starts a new branch.
+  Starts a new branch.
 
- Available options are
+  Available options are
 d,default-branch!  start from default branch ($remote $defaultBranch or $defaultBranch)
 s,sync!            sync default branch (if using default branch) before start
 "
@@ -22,8 +21,8 @@ total_argc=$#
 while test $# != 0
 do
 	case "$1" in
-	--default-branch)  useDefault=true;;
-	--sync)            sync=true;;
+	-d) useDefault=true;;
+	-s) sync=true;;
 	--)
 		shift
 		break
@@ -42,14 +41,14 @@ if !(git remote | grep $remote > /dev/null); then
 fi
 
 if [ "$useDefault" = true ] ; then
-    ref=$defaultBranch
-    if [ -n "$remote" ]; then
-        ref=$remote/$ref
-    fi
+  ref=$defaultBranch
+  if [ -n "$remote" ]; then
+    ref=$remote/$ref
+  fi
 fi
 
 if [ "$sync" = true ] && [ "$useDefault" = true ] && [ -n "$remote" ] ; then
-    git fetch $remote $defaultBranch
+  git fetch $remote $defaultBranch
 fi
 
 git checkout --no-track -b $newBranch $ref

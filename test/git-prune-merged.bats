@@ -51,6 +51,16 @@ setup() {
   assert_failure
 }
 
+@test "prune-merged with --sync" {
+  skip
+  # TODO: How to create out of sync state with remote?
+}
+
+@test "prune-merged prunes origin" {
+  skip
+  # TODO: How to delete remote branch without local loosing remote ref
+}
+
 teardown() {
   cd "$project"
   clean_sandbox_repos

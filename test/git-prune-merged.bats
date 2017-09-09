@@ -19,6 +19,14 @@ setup() {
   assert_output --partial "usage: git prune-merged"
 }
 
+@test "prune-merged has nothing to prune" {
+  create_remote_sandbox origin
+  git push --set-upstream origin master
+  run git-prune-merged
+  assert_success
+  assert_not_equal `git rev-parse --abbrev-ref HEAD` "master"
+}
+
 @test "prune-merged checks out origin/master and prunes merged branches" {
   create_remote_sandbox origin
   git push --set-upstream origin master
@@ -33,23 +41,25 @@ setup() {
 }
 
 @test "prune-merged does not prune master" {
-  commit_file new-file
   create_remote_sandbox origin
   git push --set-upstream origin master
-  git reset HEAD~ --hard
+  git checkout -b master-reference
   git-prune-merged
-  assert_not_equal `git rev-parse --abbrev-ref HEAD` "master"
-  assert_equal `git rev-parse HEAD` `git rev-parse origin/master`
-  assert_not_equal `git rev-parse HEAD` `git rev-parse master`
   run git rev-parse --verify master
   assert_success
+  run git rev-parse --verify master-reference
+  assert_failure
 }
 
-#@test "prune-merged checks out master and pruns merged branches (no remote)" {
-#  git checkout -b new-branch -q
-#  run git-prune-merged
-#  assert_equal `git rev-parse --abbrev-ref HEAD` "master"
-#}
+@test "prune-merged with --sync" {
+  skip
+  # TODO: How to create out of sync state with remote?
+}
+
+@test "prune-merged prunes origin" {
+  skip
+  # TODO: How to delete remote branch without local loosing remote ref
+}
 
 teardown() {
   cd "$project"

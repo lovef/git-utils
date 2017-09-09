@@ -7,6 +7,7 @@ function git-start() {
 
 load "test_helper/bats-support/load"
 load "test_helper/bats-assert/load"
+load "test_helper/assert-utils"
 
 # Test setup based on https://github.com/paulirish/git-open/blob/master/test/git-open.bats
 sandboxGit="test-repo"
@@ -88,29 +89,4 @@ function create_remote_sandbox() {
   assert [ -e "$sandboxRemote/HEAD" ]
   git remote add $1 $sandboxRemote
   assert_equal `git config --get remote.$1.url` $sandboxRemote
-}
-
-
-# Assert that values are not equal.
-# Fail and display details if the expected and actual values do
-# equal. Details include both values.
-#
-# Globals:
-#   none
-# Arguments:
-#   $1 - actual value
-#   $2 - unexpected value
-# Returns:
-#   0 - values do not equal
-#   1 - otherwise
-# Outputs:
-#   STDERR - details, on failure
-assert_not_equal() {
-  if [[ $1 == "$2" ]]; then
-    batslib_print_kv_single_or_multi 8 \
-        'expected not' "$2" \
-        'actual      ' "$1" \
-      | batslib_decorate 'values do not equal' \
-      | fail
-  fi
 }

@@ -1,9 +1,6 @@
 #!/usr/bin/env bats
 
 project=`pwd`
-function git-start() {
-   "$project/bin/git-start" $@
-}
 
 load "test_helper/bats-support/load"
 load "test_helper/bats-assert/load"
@@ -11,8 +8,10 @@ load "test_helper/assert-utils"
 load "test_helper/git-test-utils"
 
 setup() {
+  start_path_with "$project/bin"
+  assert_equal `which git-start` "$project/bin/git-start"
   create_git_sandbox
-  assert_equal "$project/$sandboxGit" `pwd`
+  assert_equal `pwd` "$project/$sandboxGit"
 }
 
 @test "help text" {

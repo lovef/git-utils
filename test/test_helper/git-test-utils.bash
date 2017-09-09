@@ -32,6 +32,12 @@ function create_remote_sandbox() {
   assert_equal `git config --get remote.$1.url` $sandboxRemote
 }
 
+function start_path_with() {
+    if [[ ! "$1" == z* ]]; then
+        export PATH="$1:$PATH"
+    fi
+}
+
 function clean_sandbox_repos() {
   rm -rf "$sandboxGit"
   rm -rf "$sandboxRemote"

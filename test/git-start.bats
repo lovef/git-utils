@@ -8,15 +8,11 @@ function git-start() {
 load "test_helper/bats-support/load"
 load "test_helper/bats-assert/load"
 load "test_helper/assert-utils"
-
-# Test setup based on https://github.com/paulirish/git-open/blob/master/test/git-open.bats
-sandboxGit="test-repo"
-sandboxRemote="test-remote"
+load "test_helper/git-test-utils"
 
 setup() {
   create_git_sandbox
   assert_equal "$project/$sandboxGit" `pwd`
-  export BROWSER=echo
 }
 
 @test "help text" {
@@ -57,36 +53,5 @@ setup() {
 
 teardown() {
   cd "$project"
-  rm -rf "$sandboxGit"
-  rm -rf "$sandboxRemote"
-}
-
-# helper to create a test git sandbox that won't dirty the real repo
-function create_git_sandbox() {
-  rm -rf "$sandboxGit"
-  mkdir "$sandboxGit"
-  cd "$sandboxGit"
-  # safety check. Don't muck with the git repo if we're not inside the sandbox.
-  assert_equal $(basename $PWD) "$sandboxGit"
-
-  git init -q
-  assert [ -e "../$sandboxGit/.git" ]
-  git config user.email "test@runner.com" && git config user.name "Test Runner"
-
-  git checkout -B "master"
-
-  echo "ok" > readme.txt
-  git add readme.txt
-  git commit -m "add file" -q
-}
-
-function create_remote_sandbox() {
-  #assert_equal "$1" "origin"
-  assert [ ! -z "$1" ]
-  rm -rf "$sandboxRemote"
-  mkdir "$sandboxRemote"
-  git init --bare "$sandboxRemote" -q
-  assert [ -e "$sandboxRemote/HEAD" ]
-  git remote add $1 $sandboxRemote
-  assert_equal `git config --get remote.$1.url` $sandboxRemote
+  clean_sandbox_repos
 }

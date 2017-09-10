@@ -42,6 +42,21 @@ function create_sandbox_remote() {
   fi
 }
 
+function create_sandbox_clone_and_cd() {
+  remote="$sandbox/$1"
+  if [ -z "$1" ] || [ ! -e "$remote/HEAD" ] ; then
+    fail "remote name is required"
+    exit 1
+  fi
+  if [ -z "$2" ] ; then
+    fail "clone name is required"
+    exit 1
+  fi
+  path="$sandbox/$2"
+  git clone "$remote" "$path"
+  cd "$path"
+}
+
 function commit_file() {
   if [ -z "$1" ] ; then
     fail "file name is required"

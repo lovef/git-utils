@@ -1,17 +1,14 @@
 #!/usr/bin/env bats
 
-project=`pwd`
-
 load "test_helper/bats-support/load"
 load "test_helper/bats-assert/load"
 load "test_helper/assert-utils"
 load "test_helper/git-test-utils"
 
 setup() {
+  create_sandbox_git_and_cd "test-git"
   start_path_with "$project/bin"
   assert_equal `which git-prune-merged` "$project/bin/git-prune-merged"
-  create_git_sandbox
-  assert_equal `pwd` "$project/$sandboxGit"
 }
 
 @test "prune-merged help text" {
@@ -20,7 +17,7 @@ setup() {
 }
 
 @test "prune-merged has nothing to prune" {
-  create_remote_sandbox origin
+  create_sandbox_remote origin
   git push --set-upstream origin master
   run git-prune-merged
   assert_success
@@ -28,7 +25,7 @@ setup() {
 }
 
 @test "prune-merged checks out origin/master and prunes merged branches" {
-  create_remote_sandbox origin
+  create_sandbox_remote origin
   git push --set-upstream origin master
   git checkout -b branch-to-be-pruned -q
   run git-prune-merged
@@ -41,7 +38,7 @@ setup() {
 }
 
 @test "prune-merged does not prune master" {
-  create_remote_sandbox origin
+  create_sandbox_remote origin
   git push --set-upstream origin master
   git checkout -b master-reference
   git-prune-merged
@@ -62,6 +59,5 @@ setup() {
 }
 
 teardown() {
-  cd "$project"
-  clean_sandbox_repos
+  remove_sandbox_and_cd
 }

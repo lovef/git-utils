@@ -1,17 +1,14 @@
 #!/usr/bin/env bats
 
-project=`pwd`
-
 load "test_helper/bats-support/load"
 load "test_helper/bats-assert/load"
 load "test_helper/assert-utils"
 load "test_helper/git-test-utils"
 
 setup() {
+  create_sandbox_git_and_cd "test-git"
   start_path_with "$project/bin"
   assert_equal `which git-start` "$project/bin/git-start"
-  create_git_sandbox
-  assert_equal `pwd` "$project/$sandboxGit"
 }
 
 @test "start help text" {
@@ -39,7 +36,7 @@ setup() {
 }
 
 @test "start from default remote branch" {
-  create_remote_sandbox origin
+  create_sandbox_remote origin
   git push --set-upstream origin master
   echo "branch master" > master.txt
   git add master.txt
@@ -51,6 +48,5 @@ setup() {
 }
 
 teardown() {
-  cd "$project"
-  clean_sandbox_repos
+  remove_sandbox_and_cd
 }

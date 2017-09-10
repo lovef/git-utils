@@ -98,6 +98,28 @@ setup() {
   assert_equal `git config --get remote.$test_remote.url` "$sandbox/$test_remote"
 }
 
+@test "create sandbox clone" {
+  test_remote="test-remote"
+  run create_sandbox_clone_and_cd ; assert_failure
+  run create_sandbox_clone_and_cd $test_remote ; assert_failure
+  run create_sandbox_clone_and_cd $test_remote "failing-clone" ; assert_failure
+
+  create_sandbox_git_and_cd "base-git"
+  head=`git rev-parse HEAD`
+  create_sandbox_remote $test_remote
+  git push $test_remote master
+  run create_sandbox_clone_and_cd ; assert_failure
+  run create_sandbox_clone_and_cd $test_remote ; assert_failure
+
+  test_clone="test-clone"
+  create_sandbox_clone_and_cd $test_remote $test_clone
+  assert_equal `pwd` "$sandbox/$test_clone"
+  assert_equal `git rev-parse --show-toplevel` `pwd`
+  assert_equal `git config --get remote.origin.url` "$sandbox/$test_remote"
+  assert_equal `git rev-parse HEAD` $head
+  assert_equal `git symbolic-ref -q --short HEAD` "master"
+}
+
 @test "start path with" {
   original=$PATH
   path="$sandbox/bin"

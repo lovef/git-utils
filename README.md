@@ -17,11 +17,15 @@ Available options are
 
 ```
 $ git upload -h
-usage: git upload [options]
+usage: git upload [options] [<target-branch>]
 
-Uploads current branch to an existing remote tracking branch.
+Uploads current branch to an existing remote tracking branch. If no remote branch exist then a new branch is created.
 
-If no remote branch exist then a new branch is created.
+Intended to push branches that should be merged into a target branch via a pull request.
+
+Default target branch is origin/master. If the target is not origin/master then the target branch name will be included in the generated tracking branch name.
+
+Target branch only needs to be included during the first upload.
 
 Available options are
     -n, --new-branch      push to new branch even if tracking branch already exists
@@ -30,19 +34,22 @@ Available options are
 
 ```
 $ git sync -h
-usage: git sync [options]
+usage: git sync [options] [<target-branch>]
 
-rebases current branch against origin/master
+Rebases current branch against target branch, default origin/master.
+
+Target branch can be passed as parameter or specified in target branch through git upload [<target-branch>].
 
 Available options are
-    -s, --sync            fetch origin/master from origin before rebase
+    -s, --sync            fetch target branch before rebase
 ```
 
 ```
 $ git prune-merged -h
-usage: git prune-merged [options]
+usage: git prune-merged [options] [<target-branch>]
 
-check out origin/master, delete all merged branches and prunes origin.
+check out target branch (default origin/master), delete all  merged branches and prunes origin.
+    --	Target             branch can be passed as parameter or specified in target branch  through git upload [<target-branch>].
 
 Available options are
     -s, --sync            fetch origin/master from origin before checkout
@@ -66,9 +73,11 @@ cp bin/git-* ~/bin
 
 ### git help
 
-To use `git help` you need to compile the docs with `./gradlew asciidoctor` and copy them from
+To use `git help` on Windows git you need to compile the docs with `./gradlew asciidoctor` and copy them from
 `build/docs/html5/` to the appropriate folder. On Git for Windows it is in
 `/mingw64/share/doc/git-doc/`.
+
+`git help` with man pages is not setup at this time.
 
 ## Test
 

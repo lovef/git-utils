@@ -64,6 +64,59 @@ setup() {
   assert_equal `git rev-parse new-branch~` $newRev
 }
 
+@test "sync with target branch specified in tracking branch name" {
+  create_sandbox_remote origin
+
+  # given a new target branch
+  git checkout -b target-branch
+  commit_file "targetCommit"
+  targetHead=`git rev-parse target-branch`
+  git push -u origin target-branch
+
+  # and new branch based on master
+  git checkout -b new-branch master
+  commit_file "newFile"
+
+  # When uploading it with the specified target branch
+  git-upload target-branch
+
+  # It is first not synced
+  assert_not_equal `git rev-parse new-branch~` $targetHead
+
+  # Syncing it will automatically sync it against target branch
+  git-sync
+  assert_equal `git rev-parse new-branch~` $targetHead
+}
+
+@test "sync with target branch passed as parameter" {
+  create_sandbox_remote origin
+  git push -u origin master
+
+  # given a new target branch
+  git checkout -b target-branch
+  commit_file "targetCommit"
+  targetHead=`git rev-parse target-branch`
+  git push -u origin target-branch
+
+  # and new branch based on master
+  git checkout -b new-branch master
+  commit_file "newFile"
+
+  # When uploading it without the specified target branch
+  git push -u origin new-branch
+
+  # It is first not synced
+  assert_not_equal `git rev-parse new-branch~` $targetHead
+
+  # Syncing it will sync it with master
+  git-sync
+  assert_not_equal `git rev-parse new-branch~` $targetHead
+
+  # It can be synced with target branch passed as parameter
+  git-sync target-branch
+  assert_equal `git rev-parse new-branch~` $targetHead
+}
+
 teardown() {
   remove_sandbox_and_cd
 }

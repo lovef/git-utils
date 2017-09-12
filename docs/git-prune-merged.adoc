@@ -3,29 +3,31 @@ git-prune-merged(1)
 
 NAME
 ----
-git-prune-merged - Checkout origin/master, delete all merged branches and prunes origin.
+git-prune-merged - Checkout target branch, delete all merged branches and prunes origin.
 
 
 SYNOPSIS
 --------
 [verse]
-'git prune-merged' [options]
+'git prune-merged' [options] [<target-branch>]
 
 
 DESCRIPTION
 -----------
-Checkout `origin/master`, delete all merged branches and prunes `origin`. Handy once a pull request
-is merged.
+Checkout target branch (default `origin/master`) delete all merged branches and prunes `origin`.
+Handy once a pull request is merged.
 
-Use `--sync` to fetch `origin/master` before pruning.
+Target branch can be passed as parameter or specified in target branch
+through git upload [<target-branch>].
 
+Use `--sync` to fetch target branch before pruning.
 
 OPTIONS
 -------
 
 -s::
 --sync::
-	Fetch `origin/master` from origin before checkout
+	Fetch target branch before checkout
 
 
 NOTES

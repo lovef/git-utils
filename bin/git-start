@@ -2,15 +2,15 @@
 
 # https://github.com/git/git/blob/master/git-rebase.sh
 remote="origin"
-defaultBranch="master"
+sourceBranch="master"
 OPTIONS_KEEPDASHDASH=
 OPTIONS_SPEC="\
-git start [options] <branch>
+git start [options] <branch> [<source-branch>]
 --
   Starts a new branch.
 
   Available options are
-d,default-branch!  start from default branch ($remote $defaultBranch or $defaultBranch)
+d,default-branch!  start from default branch ($remote $sourceBranch or $sourceBranch)
 s,sync!            sync default branch (if using default branch) before start
 "
 
@@ -30,25 +30,26 @@ do
 	esac
 	shift
 done
-# Exaclty one positional argument
-test $# -ne 1 && usage
+# One or two positional arguments
+test $# -gt 2 && usage
 
 newBranch=$1
 ref=HEAD
+sourceBranch=${2:-$sourceBranch}
 
-if !(git remote | grep $remote > /dev/null); then
+if !(git rev-parse --verify "$remote/$sourceBranch" &> /dev/null); then
     unset remote
 fi
 
-if [ "$useDefault" = true ] ; then
-  ref=$defaultBranch
+if [ "$useDefault" = true ] || [ -n "$2" ] ; then
+  ref=$sourceBranch
   if [ -n "$remote" ]; then
     ref=$remote/$ref
   fi
 fi
 
 if [ "$sync" = true ] && [ "$useDefault" = true ] && [ -n "$remote" ] ; then
-  git fetch $remote $defaultBranch
+  git fetch $remote $sourceBranch
 fi
 
 git checkout --no-track -b $newBranch $ref

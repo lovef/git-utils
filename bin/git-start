@@ -2,15 +2,15 @@
 
 # https://github.com/git/git/blob/master/git-rebase.sh
 remote="origin"
-defaultBranch="master"
+sourceBranch="master"
 OPTIONS_KEEPDASHDASH=
 OPTIONS_SPEC="\
-git start [options] <branch>
+git start [options] <branch> [<source>]
 --
   Starts a new branch.
 
   Available options are
-d,default-branch!  start from default branch ($remote $defaultBranch or $defaultBranch)
+d,default-branch!  start from default branch ($remote $sourceBranch or $sourceBranch)
 s,sync!            sync default branch (if using default branch) before start
 "
 
@@ -21,8 +21,8 @@ total_argc=$#
 while test $# != 0
 do
 	case "$1" in
-	-d) useDefault=true;;
-	-s) sync=true;;
+	-d) useDefault=1;;
+	-s) sync=1;;
 	--)
 		shift
 		break
@@ -30,25 +30,32 @@ do
 	esac
 	shift
 done
-# Exaclty one positional argument
-test $# -ne 1 && usage
+# One or two positional arguments
+test $# -gt 2 && usage
 
 newBranch=$1
 ref=HEAD
+sourceBranch=${2:-$sourceBranch}
 
-if !(git remote | grep $remote > /dev/null); then
-    unset remote
+if [[ $sourceBranch == "$remote/"* ]] ; then
+	useRemote=1
+	sourceBranch=${sourceBranch#"$remote/"}
+elif !(git rev-parse --verify "$remote/$sourceBranch" &> /dev/null); then
+  unset remote
+elif ((sync)) || !(git rev-parse --verify "$sourceBranch" &> /dev/null); then
+  useRemote=1
 fi
 
-if [ "$useDefault" = true ] ; then
-  ref=$defaultBranch
-  if [ -n "$remote" ]; then
+if ((useDefault)) || [ -n "$2" ] ; then
+  ref=$sourceBranch
+  if ((useRemote)) || ([ -n "$remote" ] && [ ! -n "$2" ]); then
     ref=$remote/$ref
   fi
 fi
 
-if [ "$sync" = true ] && [ "$useDefault" = true ] && [ -n "$remote" ] ; then
-  git fetch $remote $defaultBranch
+if ((sync)) && [ -n "$remote" ] ; then
+  git fetch $remote $sourceBranch
 fi
 
+echo git checkout --no-track -b $newBranch $ref
 git checkout --no-track -b $newBranch $ref

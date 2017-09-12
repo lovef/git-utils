@@ -9,12 +9,16 @@ git-sync - Rebases current branch against `origin/master`
 SYNOPSIS
 --------
 [verse]
-'git sync' [options]
+'git sync' [options] [<target-branch>]
 
 
 DESCRIPTION
 -----------
-Rebases current branch against `origin/master`. Handy when preparing a branch for a pull request.
+Rebases current branch against target branch, default `origin/master`.
+Handy when preparing a branch for a pull request.
+
+Target branch can be passed as parameter or specified in target branch
+through git upload [<target-branch>].
 
 
 OPTIONS

@@ -2,17 +2,20 @@
 
 # https://github.com/git/git/blob/master/git-rebase.sh
 remote="origin"
-branch="master"
-remoteBranch="$remote/$branch"
+target="master"
+remoteTarget="$remote/$target"
 OPTIONS_STUCKLONG=t
 OPTIONS_KEEPDASHDASH=
 OPTIONS_SPEC="\
-git sync [options]
+git sync [options] [<target-branch>]
 --
- rebases current branch against $remoteBranch
+ Rebases current branch against target branch, default $remoteTarget.
+
+ Target branch can be passed as parameter or specified in target branch\
+ through git upload [<target-branch>].
 
  Available options are
-s,sync!  fetch $remoteBranch from $remote before rebase
+s,sync!  fetch target branch before rebase
 "
 
 # https://www.kernel.org/pub/software/scm/git/docs/git-sh-setup.html
@@ -30,14 +33,25 @@ do
 	esac
 	shift
 done
-# No positional arguments
-test $# -ne 0 && usage
+
+# Max 1 positional arguments
+test $# -gt 1 && usage
 
 # Exit on error
 set -e
 
-if [ "$sync" = true ] ; then
-    git fetch $remote $branch
+trackingBranch=`git rev-parse --abbrev-ref --symbolic-full-name @{upstream} 2> /dev/null | sed "s/$remote\///"`
+targetPattern="/target=([^/]+)/"
+if [[ $trackingBranch =~ $targetPattern ]] ; then
+  target="${BASH_REMATCH[1]}"
 fi
 
-git rebase $remoteBranch
+target=${1:-$target}
+
+remoteTarget="$remote/$target"
+
+if [ "$sync" = true ] ; then
+  git fetch $remote $target
+fi
+
+git rebase $remoteTarget

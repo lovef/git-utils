@@ -4,10 +4,19 @@
 OPTIONS_STUCKLONG=t
 OPTIONS_KEEPDASHDASH=
 OPTIONS_SPEC="\
-git upload [options]
+git upload [options] [<target-branch>]
 --
- Uploads current branch to an existing remote tracking branch.
+ Uploads current branch to an existing remote tracking branch.\
  If no remote branch exist then a new branch is created.
+
+ Intended to push branches that should be merged into a target branch\
+ via a pull request.
+
+ Default target branch is origin/master. If the target is not origin/master\
+ then the target branch name will be included in the generated tracking\
+ branch name.
+
+ Target branch only needs to be included during the first upload.
 
  Available options are
 n,new-branch!  push to new branch even if tracking branch already exists
@@ -30,37 +39,48 @@ do
 	esac
 	shift
 done
-# No positional arguments
-test $# -ne 0 && usage
 
-remote="origin"
-branch="master"
-remoteBranch="$remote/$branch"
+# Max 1 positional arguments
+test $# -gt 1 && usage
 
 # Exit on error
 set -e
 
-remote=origin
-master="origin/master"
+remote="origin"
+targetBranch=${1:-"master"}
+remoteTargetBranch="$remote/$targetBranch"
+[[ "$targetBranch" == */* ]] && \
+    die "target branch $remoteTargetBranch is invalid"
+git rev-parse --verify "$remoteTargetBranch" -q &> /dev/null || \
+    die "target branch $remoteTargetBranch not found"
+remoteMaster="origin/master"
 localBranch=`git rev-parse --abbrev-ref HEAD`
 if [ "$localBranch" == HEAD ]; then
-  echo "push from 'detached HEAD' state is not allowed"
-  exit 1
+  die "push from 'detached HEAD' state is not allowed"
 fi
 trackingBranch=`git rev-parse --abbrev-ref --symbolic-full-name @{upstream} 2> /dev/null | sed "s/$remote\///"`
-if [ "$trackingBranch" == "$master" ]; then
-  echo "push to $trackingBranch is not allowed"
-  exit 1
+
+[ -n "$trackingBranch" ] && [[ "$targetBranch" != "master" ]] && \
+    [ ! "$new" ] && \
+    [[ "$trackingBranch" !=  *"/target=$targetBranch/"* ]] && \
+    die "current tracking branch does not match target branch"
+
+if [ "$trackingBranch" == "$remoteMaster" ]; then
+  die "push to $trackingBranch is not allowed"
 elif [ -z "$trackingBranch" ] || [ "$new" ]; then
-    user=`git config user.email | sed 's/@.*//'`
-    remoteBranch=$user/$localBranch
-    echo "push to $remote $remoteBranch"
-    git push --set-upstream $remote $localBranch:$remoteBranch
+  user=`git config user.email | sed 's/@.*//'`
+  if [ "$remoteTargetBranch" != "$remoteMaster" ] ; then
+    remoteBranch="$user/target=$targetBranch/$localBranch"
+  else
+    remoteBranch="$user/$localBranch"
+  fi
+  echo "push to $remote $remoteBranch"
+  git push --set-upstream $remote $localBranch:$remoteBranch
 else
-    echo "Push to existing branch $trackingBranch"
-    options=""
-    if [ "$force" = true ] ; then
-        options=--force
-    fi
-    git push $remote $localBranch:$trackingBranch $options
+  echo "Push to existing branch $trackingBranch"
+  options=""
+  if [ "$force" = true ] ; then
+    options=--force
+  fi
+  git push $remote $localBranch:$trackingBranch $options
 fi

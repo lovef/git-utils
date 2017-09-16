@@ -43,7 +43,7 @@ fi
 
 if [ "$useDefault" = true ] || [ -n "$2" ] ; then
   ref=$sourceBranch
-  if [ -n "$remote" ]; then
+  if [ -n "$remote" ] && [ ! -n "$2" ]; then
     ref=$remote/$ref
   fi
 fi

@@ -75,6 +75,84 @@ setup() {
   assert_equal `git rev-parse HEAD` $updated_head
 }
 
+@test "prune-merged with target branch specified in tracking branch name" {
+  create_sandbox_remote origin
+  git push -u origin master
+
+  # given a new target branch
+  git checkout -b target-branch
+  commit_file "targetCommit"
+  targetHead=`git rev-parse target-branch`
+  git push -u origin target-branch
+
+  # and new, unmerged branch
+  git checkout -b new-branch
+  commit_file "newFile"
+
+  # When uploading it with the specified target branch
+  git-upload target-branch
+
+  # And pruning it
+  git-prune-merged
+
+  # It will checkout target branch
+  assert_equal `git rev-parse HEAD` $targetHead
+
+  # But new-branch is not pruned as it is not merged
+  run git rev-parse --verify new-branch ; assert_success
+
+  # Once merged
+  git checkout target-branch
+  git merge new-branch
+  git push origin target-branch
+
+  # It can be pruned
+  git checkout new-branch
+  git-prune-merged
+  run git rev-parse --verify new-branch ; assert_failure
+}
+
+@test "prune-merged with target branch passed as parameter" {
+  create_sandbox_remote origin
+  git push -u origin master
+
+  # given a new target branch
+  git checkout -b target-branch
+  commit_file "targetCommit"
+  targetHead=`git rev-parse target-branch`
+  git push -u origin target-branch
+
+  # and new, unmerged branch
+  git checkout -b new-branch
+  commit_file "newFile"
+
+  # When uploading it without the specified target branch
+  git push -u origin new-branch
+
+  # And pruning it with target branch passed as parameter
+  git-prune-merged target-branch
+
+  # It will checkout target branch
+  assert_equal `git rev-parse HEAD` $targetHead
+
+  # But new-branch is not pruned as it is not merged
+  run git rev-parse --verify new-branch ; assert_success
+
+  # Once merged
+  git checkout target-branch
+  git merge new-branch
+  git push origin target-branch
+
+  # It can not be pruned without specifying target branch
+  git checkout new-branch
+  git-prune-merged
+  run git rev-parse --verify new-branch ; assert_success
+
+  # It can be pruned when specifying target branch
+  git-prune-merged target-branch
+  run git rev-parse --verify new-branch ; assert_failure
+}
+
 @test "prune-merged prunes origin" {
   create_sandbox_remote origin
   git push -u origin master

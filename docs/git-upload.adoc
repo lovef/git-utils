@@ -9,7 +9,7 @@ git-upload - Uploads current branch to remote
 SYNOPSIS
 --------
 [verse]
-'git upload' [options]
+'git upload' [options] [<target-branch>]
 
 
 DESCRIPTION
@@ -17,8 +17,20 @@ DESCRIPTION
 Uploads current branch to an existing remote tracking branch. If no remote branch exist
 then a new branch is created.
 
-When creating a new remote branch it will be named 'user-name'/'local-branch-name', where
-user name is the first part of the configured email `git config user.email` (before '@').
+When creating a new remote branch it will be named 'user-name'/'local-branch-name' or
+'user-name'/target='target-branch'/'local-branch-name', where user name is the first
+part of the configured email `git config user.email` (before '@').
+
+Default target branch is origin/master. If the target is not origin/master
+then the target branch name will be included in the generated tracking
+branch name.
+
+Target branch name should be provided without remote name and may not contain '/'.
+
+Once tracking branch is setup for target branch then it needs not be provided
+as a parameter in subequent uploads.
+
+Target branch may be changed by using the `-n`option.
 
 
 OPTIONS
@@ -26,7 +38,8 @@ OPTIONS
 
 -n::
 --new-branch::
-	Push to new branch even if tracking branch already exists
+	Push to new branch even if tracking branch already exists. Can be used
+	to configure a new target branch.
 
 -f::
 --force::

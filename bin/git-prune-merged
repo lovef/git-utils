@@ -2,17 +2,21 @@
 
 # https://github.com/git/git/blob/master/git-rebase.sh
 remote="origin"
-branch="master"
-remoteBranch="$remote/$branch"
+target="master"
+remoteTarget="$remote/$target"
 OPTIONS_STUCKLONG=t
 OPTIONS_KEEPDASHDASH=
 OPTIONS_SPEC="\
-git prune-merged [options]
+git prune-merged [options] [<target-branch>]
 --
-  check out $remoteBranch, delete all merged branches and prunes origin.
+  check out target branch (default $remoteTarget), delete all\
+  merged branches and prunes origin.
+
+	Target branch can be passed as parameter or specified in target branch\
+  through git upload [<target-branch>].
 
  Available options are
-s,sync!  fetch $remoteBranch from $remote before checkout
+s,sync!  fetch $remoteTarget from $remote before checkout
 "
 
 # https://www.kernel.org/pub/software/scm/git/docs/git-sh-setup.html
@@ -30,19 +34,29 @@ do
 	esac
 	shift
 done
-# No positional arguments
-test $# -ne 0 && usage
+
+# Max 1 positional arguments
+test $# -gt 1 && usage
 
 # Exit on error
 set -e
 
+trackingBranch=`git rev-parse --abbrev-ref --symbolic-full-name @{upstream} 2> /dev/null | sed "s/$remote\///"`
+targetPattern="/target=([^/]+)/"
+if [[ $trackingBranch =~ $targetPattern ]] ; then
+  target="${BASH_REMATCH[1]}"
+fi
+
+target=${1:-$target}
+remoteTarget="$remote/$target"
+
 if [ "$sync" = true ] ; then
-    git fetch $remote $branch
+    git fetch $remote $target
 fi
 
 # Prune
 # https://stackoverflow.com/a/6127884/1020871
-git checkout $remoteBranch
+git checkout $remoteTarget
 say
 say about to prune merged branches
 git branch --merged | egrep -v "(^\*|^\s+master$)" | xargs -I {} bash -c 'if [[ -n "{}" ]]; then git branch -d "{}"; fi'

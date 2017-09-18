@@ -9,16 +9,17 @@ git-start - Starts a new branch
 SYNOPSIS
 --------
 [verse]
-'git start' [options] <branch>
+'git start' [options] <branch> [<source>]
 
 
 DESCRIPTION
 -----------
-Starts a new branch from the current `HEAD`. Use `--default-branch` to start from the default branch
-(origin master if it exists, otherwise local master).
+Starts a new branch from the current `HEAD` or `source`. Use `--default-branch`
+to start from the default branch (origin master if it exists, otherwise
+local master).
 
-If starting from a remote branch with `--default-branch` option then `--sync` will fetch it first.
-
+If starting from a remote branch with `--default-branch` option or a source parameter
+then `--sync` will fetch it first.
 
 OPTIONS
 -------

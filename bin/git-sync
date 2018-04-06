@@ -16,6 +16,7 @@ git sync [options] [<target-branch>]
 
  Available options are
 s,sync!                 fetch target branch before rebase
+p,prune!                delete branch if it is merged to target the branch. Combine with --sync to prune the remote.
 "
 
 # https://www.kernel.org/pub/software/scm/git/docs/git-sh-setup.html
@@ -26,6 +27,7 @@ while test $# != 0
 do
     case "$1" in
     --sync)  sync=true;;
+    --prune) prune=true;;
     --)
         shift
         break
@@ -54,4 +56,20 @@ if [ "$sync" = true ] ; then
     git fetch $remote $target
 fi
 
-git rebase $remoteTarget
+git rebase "$remoteTarget"
+
+if [ "$prune" = true ] ; then
+    say
+    if [[ "$(git rev-parse HEAD)" == "$(git rev-parse "$remoteTarget")" ]]; then
+        if [ "$sync" = true ] ; then
+            git remote prune $remote
+            say
+        fi
+        branch=$(git rev-parse --abbrev-ref HEAD)
+        say "Will prune $branch"
+        git checkout "$remoteTarget"
+        git branch -d $branch
+    else
+        say "Cannot prune branch as it is not merged"
+    fi
+fi

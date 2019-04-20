@@ -79,6 +79,14 @@ To use `git help` on Windows git you need to compile the docs with `./gradlew as
 
 `git help` with man pages is not setup at this time.
 
+### git alias
+
+To include `gitconfig` in your global gitconfig:
+
+```bash
+git config --global include.path  $(realpath gitconfig)
+```
+
 ## Test
 
 You'll need to install [bats](https://github.com/sstephenson/bats#installing-bats-from-source), the Bash automated testing system. It's also available as `brew install bats`

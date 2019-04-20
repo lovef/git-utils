@@ -1,0 +1,17 @@
+[alias]
+    m = checkout origin/master
+    s = status
+    st = diff --staged
+    co = checkout
+    a = add --all
+    cm = commit
+    cp = cherry-pick
+    amen = commit --amend --no-edit
+    word = commit --amend
+    last = whatchanged -1
+    last-diff = diff HEAD^..HEAD
+    find = branch -a --contains
+    work = branch --sort=-committerdate --format='%(HEAD) %(color:white)%(refname:short)%(color:reset) %(color:yellow)%(contents:subject)%(color:reset) %(color:green)%(committerdate:relative)%(color:reset) %(color:bold blue)%(authorname)%(color:reset)'
+    lg = log --graph --pretty=format:'%Cred%h%Creset - %<(50)%s %Cgreen%cr %C(bold blue)%an%Creset%C(yellow)%d%Creset' --abbrev-commit --date=relative
+    ll = log --pretty=format:'%Cred%h%Creset - %<(40)%s %Cgreen%cr %C(bold blue)%an%Creset%C(yellow)%d%Creset' --decorate --numstat -3
+    what = log --graph --pretty=format:'%Cred%h%Creset - %<(50)%s %Cgreen%cr %C(bold blue)%an%Creset%C(yellow)%d%Creset' --abbrev-commit --date=relative -10

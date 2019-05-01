@@ -48,11 +48,12 @@ Available options are
 $ git prune-merged -h
 usage: git prune-merged [options] [<target-branch>]
 
-check out target branch (default origin/master), delete all  merged branches and prunes origin.
-    --	Target             branch can be passed as parameter or specified in target branch  through git upload [<target-branch>].
+check out target branch (default origin/master), delete all merged branches.
+
+Target branch can be passed as parameter or specified in target branch through git upload [<target-branch>].
 
 Available options are
-    -s, --sync            fetch origin/master from origin before checkout
+    -s, --sync            fetch origin/master and prune origin before checkout
 ```
 
 ## Setup

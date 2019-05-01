@@ -155,7 +155,7 @@ setup() {
   run git rev-parse --verify new-branch ; assert_failure
 }
 
-@test "prune-merged prunes origin" {
+@test "prune-merged prunes origin on --sync" {
   create_sandbox_remote origin
   git push -u origin master
   create_sandbox_clone_and_cd origin clone
@@ -168,7 +168,7 @@ setup() {
 
   cd "$sandbox/clone"
   run git branch -r ; assert_output --partial "origin/$to_be_pruned"
-  git-prune-merged
+  git-prune-merged --sync
   run git branch -r ; refute_output --partial "origin/$to_be_pruned"
 }
 
@@ -205,7 +205,7 @@ setup() {
   git rebase origin/master
 
   # Can be pruned
-  git-prune-merged
+  git-prune-merged --sync
   run git rev-parse --verify branch-a ; assert_failure
   run git rev-parse --verify branch-b ; assert_failure
 }

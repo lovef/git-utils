@@ -42,6 +42,7 @@ Target branch can be passed as parameter or specified in target branch through g
 
 Available options are
     -s, --sync            fetch target branch before rebase
+    -p, --prune           delete branch if it is merged to target the branch. Combine with --sync to prune the remote.
 ```
 
 ```

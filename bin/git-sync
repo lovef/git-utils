@@ -15,7 +15,7 @@ git sync [options] [<target-branch>]
  through git upload [<target-branch>].
 
  Available options are
-s,sync!  fetch target branch before rebase
+s,sync!                 fetch target branch before rebase
 "
 
 # https://www.kernel.org/pub/software/scm/git/docs/git-sh-setup.html
@@ -24,14 +24,14 @@ s,sync!  fetch target branch before rebase
 total_argc=$#
 while test $# != 0
 do
-	case "$1" in
-	--sync)  sync=true;;
-	--)
-		shift
-		break
-		;;
-	esac
-	shift
+    case "$1" in
+    --sync)  sync=true;;
+    --)
+        shift
+        break
+        ;;
+    esac
+    shift
 done
 
 # Max 1 positional arguments
@@ -43,7 +43,7 @@ set -e
 trackingBranch=`git rev-parse --abbrev-ref --symbolic-full-name @{upstream} 2> /dev/null | sed "s/$remote\///"`
 targetPattern="/target=([^/]+)/"
 if [[ $trackingBranch =~ $targetPattern ]] ; then
-  target="${BASH_REMATCH[1]}"
+    target="${BASH_REMATCH[1]}"
 fi
 
 target=${1:-$target}
@@ -51,7 +51,7 @@ target=${1:-$target}
 remoteTarget="$remote/$target"
 
 if [ "$sync" = true ] ; then
-  git fetch $remote $target
+    git fetch $remote $target
 fi
 
 git rebase $remoteTarget

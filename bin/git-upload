@@ -6,21 +6,21 @@ OPTIONS_KEEPDASHDASH=
 OPTIONS_SPEC="\
 git upload [options] [<target-branch>]
 --
- Uploads current branch to an existing remote tracking branch.\
- If no remote branch exist then a new branch is created.
+    Uploads current branch to an existing remote tracking branch.\
+    If no remote branch exist then a new branch is created.
 
- Intended to push branches that should be merged into a target branch\
- via a pull request.
+    Intended to push branches that should be merged into a target branch\
+    via a pull request.
 
- Default target branch is origin/master. If the target is not origin/master\
- then the target branch name will be included in the generated tracking\
- branch name.
+    Default target branch is origin/master. If the target is not origin/master\
+    then the target branch name will be included in the generated tracking\
+    branch name.
 
- Target branch only needs to be included during the first upload.
+    Target branch only needs to be included during the first upload.
 
- Available options are
-n,new-branch!  push to new branch even if tracking branch already exists
-f,force!       force push
+    Available options are
+n,new-branch!           push to new branch even if tracking branch already exists
+f,force!                force push
 "
 
 # https://www.kernel.org/pub/software/scm/git/docs/git-sh-setup.html
@@ -29,15 +29,15 @@ f,force!       force push
 total_argc=$#
 while test $# != 0
 do
-	case "$1" in
-	--new-branch)  new=true;;
-	--force)       force=true;;
-	--)
-		shift
-		break
-		;;
-	esac
-	shift
+    case "$1" in
+    --new-branch)  new=true;;
+    --force)       force=true;;
+    --)
+        shift
+        break
+        ;;
+    esac
+    shift
 done
 
 # Max 1 positional arguments

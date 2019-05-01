@@ -9,14 +9,14 @@ OPTIONS_KEEPDASHDASH=
 OPTIONS_SPEC="\
 git prune-merged [options] [<target-branch>]
 --
-  check out target branch (default $remoteTarget), delete all\
-  merged branches and prunes origin.
+    check out target branch (default $remoteTarget), delete all\
+    merged branches and prunes origin.
 
-  Target branch can be passed as parameter or specified in target branch\
-  through git upload [<target-branch>].
+    Target branch can be passed as parameter or specified in target branch\
+    through git upload [<target-branch>].
 
- Available options are
-s,sync!  fetch $remoteTarget from $remote before checkout
+    Available options are
+s,sync!                 fetch $remoteTarget from $remote before checkout
 "
 
 # https://www.kernel.org/pub/software/scm/git/docs/git-sh-setup.html

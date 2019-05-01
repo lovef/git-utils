@@ -18,6 +18,13 @@ setup() {
   assert_output --partial "usage: git start"
 }
 
+@test "start branch requires at least one param" {
+  # When starting without branch parameter
+  run git-start
+  # No usage info is displayed
+  assert_output --partial "usage: git start"
+}
+
 @test "start branch" {
   git-start a
   echo "branch a" > a.txt

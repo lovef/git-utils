@@ -56,14 +56,14 @@ if [ "$sync" = true ] ; then
 fi
 
 # Prune
+say about to prune origin
+git remote prune origin
+say
 # https://stackoverflow.com/a/6127884/1020871
 git checkout $remoteTarget
 say
 say about to prune merged branches
 git branch --merged | egrep -v "(^\*|^\s+master$)" | xargs -I {} bash -c 'if [[ -n "{}" ]]; then git branch -d "{}"; fi'
-say
-say about to prune origin
-git remote prune origin
 
 if [[ -n $currentBranch ]] && git rev-parse --verify --quiet $currentBranch 2>&1 >/dev/null; then
     say

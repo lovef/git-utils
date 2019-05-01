@@ -68,7 +68,10 @@ if [ "$prune" = true ] ; then
         branch=$(git rev-parse --abbrev-ref HEAD)
         say "Will prune $branch"
         git checkout "$remoteTarget"
-        git branch -d $branch
+        if ! git branch -d $branch; then
+            say
+            git checkout $branch
+        fi
     else
         say "Cannot prune branch as it is not merged"
     fi

@@ -172,6 +172,44 @@ setup() {
   run git branch -r ; refute_output --partial "origin/$to_be_pruned"
 }
 
+@test "prune branches that have been rebased on remote" {
+  # Given a remote
+  create_sandbox_remote origin
+  git push -u origin master
+
+  # With two branches
+  create_sandbox_clone_and_cd origin clone
+  git checkout -b branch-a
+  commit_file "newFileA"
+  git push -u origin branch-a
+  git checkout -b branch-b
+  commit_file "newFileB"
+  git push -u origin branch-b
+
+  # That is rebased against master on remote
+  cd "$sandbox/$test_git"
+  git fetch origin branch-a
+  git rebase origin/branch-a
+  git fetch origin branch-b
+  git rebase origin/branch-b
+  git push origin --delete branch-a
+  git push origin --delete branch-b
+  git push origin master
+
+  # And synced
+  cd "$sandbox/clone"
+  git fetch origin master
+  git checkout branch-a
+  git rebase origin/master
+  git checkout branch-b
+  git rebase origin/master
+
+  # Can be pruned
+  git-prune-merged
+  run git rev-parse --verify branch-a ; assert_failure
+  run git rev-parse --verify branch-b ; assert_failure
+}
+
 teardown() {
   remove_sandbox_and_cd
 }

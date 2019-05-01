@@ -23,7 +23,6 @@ setup() {
   git push --set-upstream origin master
   run git-prune-merged
   assert_success
-  assert_not_equal `git rev-parse --abbrev-ref HEAD` "master"
 }
 
 @test "prune-merged checks out origin/master and prunes merged branches" {
@@ -37,6 +36,15 @@ setup() {
   assert_equal `git rev-parse HEAD` `git rev-parse master`
   run git rev-parse --verify branch-to-be-pruned
   assert_failure
+}
+
+@test "prune-merged checks out original branch if it was not pruned" {
+  create_sandbox_remote origin
+  git push --set-upstream origin master
+  git checkout -b "should-not-be-pruned"
+  commit_file "new-commit"
+  git-prune-merged
+  assert_equal `git rev-parse --abbrev-ref HEAD` "should-not-be-pruned"
 }
 
 @test "prune-merged does not prune master" {
@@ -53,6 +61,7 @@ setup() {
 @test "prune-merged with --sync" {
   create_sandbox_remote origin
   git push -u origin master
+
   create_sandbox_clone_and_cd origin clone
   to_be_pruned="to-be-pruned"
   git checkout -b $to_be_pruned
@@ -69,8 +78,7 @@ setup() {
   cd "$sandbox/clone"
   git-prune-merged
   run git rev-parse --verify $to_be_pruned ; assert_success
-  assert_not_equal `git rev-parse HEAD` $updated_head
-  git-prune-merged -s
+  git-prune-merged --sync
   run git rev-parse --verify $to_be_pruned ; assert_failure
   assert_equal `git rev-parse HEAD` $updated_head
 }
@@ -85,7 +93,7 @@ setup() {
   targetHead=`git rev-parse target-branch`
   git push -u origin target-branch
 
-  # and new, unmerged branch
+  # and a new, unmerged branch
   git checkout -b new-branch
   commit_file "newFile"
 
@@ -95,10 +103,7 @@ setup() {
   # And pruning it
   git-prune-merged
 
-  # It will checkout target branch
-  assert_equal `git rev-parse HEAD` $targetHead
-
-  # But new-branch is not pruned as it is not merged
+  # new-branch is not pruned as it is not merged
   run git rev-parse --verify new-branch ; assert_success
 
   # Once merged
@@ -122,7 +127,7 @@ setup() {
   targetHead=`git rev-parse target-branch`
   git push -u origin target-branch
 
-  # and new, unmerged branch
+  # and a new, unmerged branch
   git checkout -b new-branch
   commit_file "newFile"
 
@@ -132,10 +137,7 @@ setup() {
   # And pruning it with target branch passed as parameter
   git-prune-merged target-branch
 
-  # It will checkout target branch
-  assert_equal `git rev-parse HEAD` $targetHead
-
-  # But new-branch is not pruned as it is not merged
+  # new-branch is not pruned as it is not merged
   run git rev-parse --verify new-branch ; assert_success
 
   # Once merged

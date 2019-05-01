@@ -12,7 +12,7 @@ git prune-merged [options] [<target-branch>]
   check out target branch (default $remoteTarget), delete all\
   merged branches and prunes origin.
 
-	Target branch can be passed as parameter or specified in target branch\
+  Target branch can be passed as parameter or specified in target branch\
   through git upload [<target-branch>].
 
  Available options are
@@ -25,21 +25,22 @@ s,sync!  fetch $remoteTarget from $remote before checkout
 total_argc=$#
 while test $# != 0
 do
-	case "$1" in
-	--sync)  sync=true;;
-	--)
-		shift
-		break
-		;;
-	esac
-	shift
+    case "$1" in
+    --sync)  sync=true;;
+    --)
+        shift
+        break
+        ;;
+    esac
+    shift
 done
 
 # Max 1 positional arguments
 test $# -gt 1 && usage
 
-# Exit on error
-set -e
+currentBranch=$(git symbolic-ref --quiet --short HEAD 2> /dev/null)
+
+set -e # Exit on error
 
 trackingBranch=`git rev-parse --abbrev-ref --symbolic-full-name @{upstream} 2> /dev/null | sed "s/$remote\///"`
 targetPattern="/target=([^/]+)/"
@@ -63,3 +64,9 @@ git branch --merged | egrep -v "(^\*|^\s+master$)" | xargs -I {} bash -c 'if [[ 
 say
 say about to prune origin
 git remote prune origin
+
+if [[ -n $currentBranch ]] && git rev-parse --verify --quiet $currentBranch 2>&1 >/dev/null; then
+    say
+    say "check out $currentBranch since it was not prunned"
+    git checkout $currentBranch --quiet
+fi

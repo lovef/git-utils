@@ -5,10 +5,10 @@ load "test_helper/bats-assert/load"
 load "test_helper/assert-utils"
 load "test_helper/git-test-utils"
 
-start_dir=`pwd`
+start_dir=$(readlink -m $(pwd))
 
 setup() {
-  assert_equal `pwd` $start_dir
+  assert_equal $(readlink -m $(pwd)) $start_dir
   assert [ ! -e "$sandbox" ]
 }
 
@@ -125,7 +125,7 @@ setup() {
   path="$sandbox/bin"
   run assert_start_with $PATH $path ; assert_failure
   start_path_with $path
-  assert_equal $PATH "$path:$original"
+  assert_equal "$PATH" "$path:$original"
 }
 
 teardown() {

@@ -1,6 +1,6 @@
 
 # Test setup based on https://github.com/paulirish/git-open/blob/master/test/git-open.bats
-project=`pwd`
+project=$(readlink -m $(pwd))
 sandbox="$project/test/sandbox"
 sandboxGit="test-repo"
 sandboxRemote="test-remote"
@@ -61,8 +61,9 @@ function commit_file() {
     fail "file name is required"
     exit 1
   fi
-  if [[ `git rev-parse --show-toplevel` != $sandbox* ]] ; then
-    fail "cannot commit in git outside sandbox"
+  gitPath=$(git rev-parse --show-toplevel)
+  if [[ $gitPath != $sandbox/* ]] ; then
+    fail "cannot commit in git $gitPath outside sandbox $sandbox"
     exit 1
   fi
   touch "$1"

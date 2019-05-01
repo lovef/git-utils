@@ -31,6 +31,7 @@ do
     shift
 done
 # One or two positional arguments
+test $# -lt 1 && usage
 test $# -gt 2 && usage
 
 newBranch=$1

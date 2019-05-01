@@ -6,7 +6,6 @@ sandboxGit="test-repo"
 sandboxRemote="test-remote"
 
 function create_sandbox_and_cd() {
-  sandbox='test/sandbox'
   mkdir -p $sandbox
   cd $sandbox
   sandbox=`pwd`

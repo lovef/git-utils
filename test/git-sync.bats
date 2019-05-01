@@ -149,9 +149,39 @@ setup() {
   # when syncing with prune
   git-sync --prune remote-target-branch
 
-  # Local branch is not removed
-  run git rev-parse --verify target-branch ; assert_success
+  # Local branch is not removed and still cheked out
   assert_equal `git rev-parse --abbrev-ref HEAD` target-branch
+}
+
+@test "check out original branch if prune failes" {
+  create_sandbox_remote origin
+  git push -u origin master
+
+  # given a new branch
+  git checkout -b local-branch
+  commit_file "commit"
+  targetHead=`git rev-parse local-branch`
+  git push -u origin local-branch:remote-branch
+
+  # merge to master
+  create_sandbox_clone_and_cd origin clone
+  git checkout master
+  git cherry-pick origin/remote-branch
+  git commit --amend -m"new commit"
+  git push origin master
+
+  # fetch updated master
+  cd "$sandbox/$test_git"
+  git fetch origin master
+
+  # when syncing with prune
+  git-sync --prune
+
+  # Local branch is not removed and still cheked out
+  assert_equal `git rev-parse --abbrev-ref HEAD` local-branch
+
+  # Local branch is synced with remote master
+  assert_equal `git rev-parse origin/master` `git rev-parse local-branch`
 }
 
 @test "prunes origin on --sync and --prune" {

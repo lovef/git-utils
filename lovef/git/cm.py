@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import sys
 import subprocess
 import argparse
 import re
@@ -10,9 +11,10 @@ Given branch 123-branch-name
 When: git cm My message
 Then: git commit -m'rel #123 My message'"""
 
-
-def parseArguments():
+def parseArguments(argv):
+    global args
     parser = argparse.ArgumentParser(
+        "git cm",
         description=helpText, formatter_class=argparse.RawTextHelpFormatter)
     parser.add_argument("message", nargs="+", help="Message")
     parser.add_argument("-a", "--all", help="Commit all changes",
@@ -23,13 +25,10 @@ def parseArguments():
                         action="store_true")
     parser.add_argument("-d", "--dry-run", help="Do not commit, just log",
                         action="store_true")
-    return parser.parse_args()
+    args = parser.parse_args(argv)
 
-
-args = parseArguments()
-
-
-def main():
+def main(argv=sys.argv[1:]):
+    parseArguments(argv)
     message = " ".join(args.message)
     if args.dry_run:
         printGrey("dry run")

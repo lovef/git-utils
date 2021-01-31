@@ -59,10 +59,14 @@ Available options are
 
 ## Setup
 
-Place the git scripts from `bin` in your `PATH`, eg by creating a `~/.local/bin` catalog in your home directory:
+```sh
+pip3 install .
+```
+
+### Uninstall
 
 ```sh
-mkdir -p ~/.local/bin && cp bin/git-* $_
+pip3 uninstall lovef.git
 ```
 
 ### git help
@@ -77,11 +81,17 @@ To use `git help` on Windows git you need to compile the docs with `./gradlew as
 
 To include `gitconfig` in your global gitconfig:
 
-```bash
+```sh
 git config --global include.path  $(realpath gitconfig)
 ```
 
 ## Test
+
+```sh
+./setup.py test
+```
+
+### Test bash scripts
 
 You'll need to install [bats](https://github.com/sstephenson/bats#installing-bats-from-source), the Bash automated testing system. It's also available as `brew install bats`
 

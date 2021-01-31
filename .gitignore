@@ -5,5 +5,8 @@
 .DS_Store
 **/build
 **/out
+dist
+*.egg-info/
+__pycache__
 node_modules/
 .vscode

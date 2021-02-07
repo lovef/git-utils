@@ -72,7 +72,7 @@ def printGrey(*args):
 
 
 def grey(*args):
-    if len(args) >= 1:
+    if len(args) > 0:
         args = list(args)
         args[0] = "\33[90m" + args[0]
         args[-1] += "\33[0m"

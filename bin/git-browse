@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+# https://github.com/git/git/blob/master/git-rebase.sh
+remote="origin"
+OPTIONS_STUCKLONG=t
+OPTIONS_KEEPDASHDASH=
+OPTIONS_SPEC="\
+git browse
+--
+ Opens git remote in a browser
+"
+
+# https://www.kernel.org/pub/software/scm/git/docs/git-sh-setup.html
+. "$(git --exec-path)/git-sh-setup"
+
+total_argc=$#
+while test $# != 0
+do
+	case "$1" in
+	--)
+		shift
+		break
+		;;
+	esac
+	shift
+done
+# No positional argument
+test $# -ne 0 && usage
+
+# TODO: Platform independent
+
+open `git config remote.origin.url`

@@ -21,6 +21,7 @@ git upload [options] [<target-branch>]
  Available options are
 n,new-branch!           push to new branch even if tracking branch already exists
 f,force!                force push
+dry-run                 runs without pushing or writing anything
 "
 
 # https://www.kernel.org/pub/software/scm/git/docs/git-sh-setup.html
@@ -32,6 +33,7 @@ do
     case "$1" in
     --new-branch)  new=true;;
     --force)       force=true;;
+    --dry-run)     dryRun=true;;
     --)
         shift
         break
@@ -43,44 +45,66 @@ done
 # Max 1 positional arguments
 test $# -gt 1 && usage
 
+dryRunCommand=''
+if [ "$dryRun" = true ] ; then
+  dryRunCommand="echo dry-run:"
+fi
+
+remote="origin"
+mainBranch=$(git config branch.default)
+if [ -z "$mainBranch" ]; then
+  mainBranch="main"
+  if ! git show-ref --quiet "$remote/$mainBranch" && git show-ref --quiet "$remote/master"; then
+    mainBranch="master"
+  fi
+fi
+
 # Exit on error
 set -e
 
-remote="origin"
-targetBranch=${1:-"master"}
+targetBranch=${1:-$mainBranch}
 remoteTargetBranch="$remote/$targetBranch"
 [[ "$targetBranch" == */* ]] && \
     die "target branch $remoteTargetBranch is invalid"
 git rev-parse --verify "$remoteTargetBranch" -q &> /dev/null || \
     die "target branch $remoteTargetBranch not found"
-remoteMaster="origin/master"
+remoteMain="origin/$mainBranch"
 localBranch=`git rev-parse --abbrev-ref HEAD`
 if [ "$localBranch" == HEAD ]; then
   die "push from 'detached HEAD' state is not allowed"
 fi
 trackingBranch=`git rev-parse --abbrev-ref --symbolic-full-name @{upstream} 2> /dev/null | sed "s/$remote\///"`
 
-[ -n "$trackingBranch" ] && [[ "$targetBranch" != "master" ]] && \
+[ -n "$trackingBranch" ] && [[ "$targetBranch" != "$mainBranch" ]] && \
     [ ! "$new" ] && \
     [[ "$trackingBranch" !=  *"/target=$targetBranch/"* ]] && \
     die "current tracking branch does not match target branch"
 
-if [ "$trackingBranch" == "$remoteMaster" ]; then
+if [ "$trackingBranch" == "$remoteMain" ]; then
   die "push to $trackingBranch is not allowed"
 elif [ -z "$trackingBranch" ] || [ "$new" ]; then
-  user=`git config user.email | sed 's/@.*//'`
-  if [ "$remoteTargetBranch" != "$remoteMaster" ] ; then
-    remoteBranch="$user/target=$targetBranch/$localBranch"
+  prefix=$(git config --get --default="" branch.prefix)
+  if [ -z "$prefix" ]; then
+    user=`git config user.email | sed 's/@.*//'`
+    prefix="$user"
+  elif [ "$prefix" == "none" ]; then
+    prefix=""
+  fi
+  if [ ! -z "$prefix" ]; then
+    prefix="$prefix/"
+  fi
+  if [ "$remoteTargetBranch" != "$remoteMain" ] ; then
+    remoteBranch="${prefix}target=$targetBranch/$localBranch"
   else
-    remoteBranch="$user/$localBranch"
+    remoteBranch="${prefix}$localBranch"
   fi
   echo "push to $remote $remoteBranch"
-  git push --set-upstream $remote $localBranch:$remoteBranch
+  $dryRunCommand git push --set-upstream $remote $localBranch:$remoteBranch
 else
   echo "Push to existing branch $trackingBranch"
   options=""
   if [ "$force" = true ] ; then
     options=--force
   fi
-  git push $remote $localBranch:$trackingBranch $options
+  $dryRunCommand git push $remote $localBranch:$trackingBranch $options
 fi

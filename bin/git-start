@@ -2,7 +2,15 @@
 
 # https://github.com/git/git/blob/master/git-rebase.sh
 remote="origin"
-sourceBranch="master"
+mainBranch=$(git config branch.default)
+if [ -z "$mainBranch" ]; then
+  mainBranch="main"
+  if ! git show-ref --quiet "$remote/$mainBranch" && git show-ref --quiet "$remote/master"; then
+    mainBranch="master"
+  fi
+fi
+sourceBranch=$mainBranch
+
 OPTIONS_KEEPDASHDASH=
 OPTIONS_SPEC="\
 git start [options] <branch> [<source>]

@@ -1,5 +1,5 @@
 [alias]
-    m = checkout origin/master
+    m = checkout origin/main
     s = status
     st = diff --staged
     co = checkout
@@ -12,7 +12,9 @@
     last-diff = diff HEAD^..HEAD
     find = branch -a --contains
     lg = log --graph --pretty=format:'%Cred%h%Creset - %<(50)%s %Cgreen%cr %C(bold blue)%an%Creset%C(yellow)%d%Creset' --abbrev-commit --date=relative
+    l = log --graph --pretty=format:'%Cred%h%Creset - %<(50)%s %Cgreen%cr %C(bold blue)%an%Creset%C(yellow)%d%Creset' --abbrev-commit --date=relative -10
     ll = log --pretty=format:'%Cred%h%Creset - %<(40)%s %Cgreen%cr %C(bold blue)%an%Creset%C(yellow)%d%Creset' --decorate --numstat -3
-    what = log --graph --pretty=format:'%Cred%h%Creset - %<(50)%s %Cgreen%cr %C(bold blue)%an%Creset%C(yellow)%d%Creset' --abbrev-commit --date=relative -10
     work = branch --sort=-committerdate --format='%(HEAD) %(align:width=80)%(color:white)%(align:width=30)%(refname:short)%(end)%(color:reset) %(color:yellow)%(contents:subject)%(end)%(color:reset) %(color:green)%(committerdate:relative)%(color:reset) %(color:bold blue)%(authorname)%(color:reset)'
     w = for-each-ref --sort=-committerdate refs/heads/ --count 10 --format='%(HEAD) %(align:width=80)%(color:white)%(align:width=30)%(refname:short)%(end)%(color:reset) %(color:yellow)%(contents:subject)%(end)%(color:reset) %(color:green)%(committerdate:relative)%(color:reset) %(color:bold blue)%(authorname)%(color:reset)'
+
+    refl = reflog --pretty='%Cred%h %Cgreen%gd%Creset %<(50)%gs %Cgreen%cr %C(yellow)%d%Creset'

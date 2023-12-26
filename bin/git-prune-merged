@@ -59,21 +59,21 @@ target=${1:-$target}
 remoteTarget="$remote/$target"
 
 if [ "$sync" = true ] ; then
-    say about sync remote
+    echo about sync remote
     git fetch $remote $target
     git remote prune origin
-    say
+    echo
 fi
 
 # Prune
 # https://stackoverflow.com/a/6127884/1020871
 git checkout $remoteTarget
-say
-say about to prune merged branches
+echo
+echo about to prune merged branches
 git branch --merged | egrep -v "(^\*|^\s+$mainBranch$)" | xargs -I {} bash -c 'if [[ -n "{}" ]]; then git branch -d "{}"; fi'
 
 if [[ -n $currentBranch ]] && git rev-parse --verify --quiet $currentBranch 2>&1 >/dev/null; then
-    say
-    say "check out $currentBranch since it was not prunned"
+    echo
+    echo "check out $currentBranch since it was not prunned"
     git checkout $currentBranch --quiet
 fi

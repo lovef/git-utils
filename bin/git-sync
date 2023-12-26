@@ -66,20 +66,20 @@ fi
 git rebase "$remoteTarget"
 
 if [ "$prune" = true ] ; then
-    say
+    echo
     if [[ "$(git rev-parse HEAD)" == "$(git rev-parse "$remoteTarget")" ]]; then
         if [ "$sync" = true ] ; then
             git remote prune $remote
-            say
+            echo
         fi
         branch=$(git rev-parse --abbrev-ref HEAD)
-        say "Will prune $branch"
+        echo "Will prune $branch"
         git checkout "$remoteTarget"
         if ! git branch -d $branch; then
-            say
+            echo
             git checkout $branch
         fi
     else
-        say "Cannot prune branch as it is not merged"
+        echo "Cannot prune branch as it is not merged"
     fi
 fi
